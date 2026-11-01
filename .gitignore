@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Node / Vite (frontend arrives in M4)
+node_modules/
+dist/
+.vite/
+
+# OS
+.DS_Store
