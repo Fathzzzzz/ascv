@@ -32,11 +32,12 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Opsional: salin konfigurasi contoh, lalu sesuaikan bila perlu.
+Konfigurasi M1 dibaca dari environment variable shell (file `.env` belum
+dimuat otomatis; pemuatan `.env` ditambahkan bersama API di M3). Nilai yang
+tersedia tercantum di `backend/.env.example`.
 
 ```bash
-cp .env.example .env
-export REMBG_MODEL=u2net   # atau isi variabel lain lewat mekanisme shell Anda
+export REMBG_MODEL=u2net   # default; ganti bila memakai model rembg lain
 ```
 
 ## Menjalankan converter di terminal
