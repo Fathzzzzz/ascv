@@ -20,6 +20,14 @@ from .segmentation import (
     Segmenter,
     normalize_mask,
 )
+from .pipeline import (
+    DEFAULT_WIDTH,
+    WIDTH_LIMITS,
+    ConversionOptions,
+    ConversionResult,
+    convert_image,
+    resolve_width,
+)
 from .mapping import (
     ASCII_CHARSETS,
     DEFAULT_CHARSET,
@@ -33,11 +41,14 @@ __all__ = [
     "ASCII_CHARSETS",
     "CHAR_ASPECT",
     "CROP_MASK_THRESHOLD",
+    "ConversionOptions",
+    "ConversionResult",
     "CoreError",
     "DEFAULT_CHARSET",
     "DEFAULT_CLIP_LIMIT",
     "DEFAULT_EMPTY_CELL",
     "DEFAULT_REMBG_MODEL",
+    "DEFAULT_WIDTH",
     "EMOJI_CHARSETS",
     "FullMaskSegmenter",
     "InvalidImageError",
@@ -45,9 +56,11 @@ __all__ = [
     "LUMA_WEIGHTS",
     "RembgSegmenter",
     "Segmenter",
+    "WIDTH_LIMITS",
     "SegmentationError",
     "adjust_contrast",
     "crop_to_subject",
+    "convert_image",
     "decode_image",
     "enhance_contrast",
     "equalize_contrast",
@@ -57,5 +70,6 @@ __all__ = [
     "normalize_mask",
     "resize_to_grid",
     "subject_bbox",
+    "resolve_width",
     "to_grayscale",
 ]
