@@ -22,10 +22,12 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from core import (  # noqa: E402  (path bootstrap must run first)
+    BLANK_IMAGE_MESSAGE,
     DEFAULT_CLIP_LIMIT,
     DEFAULT_REMBG_MODEL,
     ConversionOptions,
     CoreError,
+    InvalidOptionError,
     convert_image,
     decode_image,
 )
@@ -83,8 +85,12 @@ def main(argv: list[str] | None = None) -> int:
     try:
         image = decode_image(args.image)
         result = convert_image(image, options)
-    except CoreError as exc:
+    except InvalidOptionError as exc:
         print(f"Error: {exc}", file=sys.stderr)
+        return 1
+    except CoreError:
+        # Undecodable, unsegmentable, or empty subject: nothing usable to print.
+        print(BLANK_IMAGE_MESSAGE, file=sys.stderr)
         return 1
 
     text = result.text + "\n"

@@ -57,6 +57,10 @@ def equalize_contrast(
         raise InvalidOptionError("Batas clip CLAHE harus angka >= 0.")
     if clip_limit == 0:
         return np.clip(array, 0.0, 255.0).astype(np.float32, copy=False)
+    if min(array.shape) < 2:
+        # CLAHE needs at least two samples per axis; on a 1-pixel crop it would
+        # stretch the single value to pure white and invert the tone.
+        return np.clip(array, 0.0, 255.0).astype(np.float32, copy=False)
     if tile_size[0] < 1 or tile_size[1] < 1:
         raise InvalidOptionError("Ukuran tile CLAHE minimal 1 x 1.")
 

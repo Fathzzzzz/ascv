@@ -29,6 +29,11 @@ def subject_bbox(mask: np.ndarray, threshold: float = CROP_MASK_THRESHOLD) -> BB
     return left, top, right, bottom
 
 
+def has_subject(mask: np.ndarray, threshold: float = CROP_MASK_THRESHOLD) -> bool:
+    """True when the mask has at least one pixel above `threshold`."""
+    return subject_bbox(mask, threshold) is not None
+
+
 def crop_to_subject(
     image: Image.Image,
     mask: np.ndarray,

@@ -6,11 +6,12 @@ from dataclasses import dataclass
 
 from PIL import Image
 
-from .crop import crop_to_subject
-from .errors import InvalidOptionError
+from .crop import crop_to_subject, has_subject
+from .errors import EmptySubjectError, InvalidOptionError
 from .grayscale import DEFAULT_CLIP_LIMIT, enhance_contrast, to_grayscale
 from .grid import CHAR_ASPECT, grid_dimensions, resize_to_grid
 from .mapping import DEFAULT_EMPTY_CELL, get_charset, map_grid
+from .quality import is_featureless
 from .segmentation import (
     DEFAULT_REMBG_MODEL,
     FullMaskSegmenter,
@@ -79,6 +80,10 @@ def convert_image(
     charset = get_charset(options.mode, options.charset)
 
     rgb = image.convert("RGB")
+    if is_featureless(to_grayscale(rgb)):
+        # Fail before loading the segmentation model: a flat frame has no subject.
+        raise EmptySubjectError()
+
     if options.remove_bg:
         masker = segmenter or RembgSegmenter(options.model_name)
     else:
@@ -86,9 +91,16 @@ def convert_image(
         masker = FullMaskSegmenter()
 
     mask = normalize_mask(masker.segment(rgb), rgb.size)
+    if not has_subject(mask):
+        # Nothing survives segmentation: every cell would be blank.
+        raise EmptySubjectError()
     subject, subject_mask = crop_to_subject(rgb, mask)
 
-    gray = enhance_contrast(to_grayscale(subject), options.contrast, options.clahe)
+    gray = to_grayscale(subject)
+    if is_featureless(gray):
+        # The mask may have selected a featureless region (wall, sky, backdrop).
+        raise EmptySubjectError()
+    gray = enhance_contrast(gray, options.contrast, options.clahe)
     cols, rows = grid_dimensions(
         width,
         subject.width,
