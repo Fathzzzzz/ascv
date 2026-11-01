@@ -37,8 +37,10 @@ VENV_PYTHON = BACKEND / ".venv" / "bin" / "python"
 BACKEND_URL = "http://localhost:8000"
 FRONTEND_URL = "http://localhost:6744"
 
-MIN_PYTHON = (3, 10)
-MAX_PYTHON = (3, 13)  # rembg/onnxruntime belum punya wheel untuk 3.14
+# rembg declares requires-python >=3.11; onnxruntime ships cp314 wheels, so the
+# ceiling is a soft guard against brand-new releases without wheels.
+MIN_PYTHON = (3, 11)
+MAX_PYTHON = (3, 14)
 MIN_NODE = (18, 0)
 MAX_FILE_BYTES = 5 * 1024 * 1024
 HTTP_TIMEOUT = 30
@@ -153,7 +155,7 @@ def check_python_version() -> Check:
         ok,
         detail,
         f"Pakai Python {MIN_PYTHON[0]}.{MIN_PYTHON[1]}–{MAX_PYTHON[1]}: "
-        "`python3.12 -m venv backend/.venv` (rembg belum mendukung 3.14).",
+        "`python3.12 -m venv backend/.venv` lalu `pip install -r backend/requirements.txt`.",
     )
 
 
