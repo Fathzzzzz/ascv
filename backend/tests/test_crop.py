@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from core.crop import crop_to_subject, subject_bbox
+from core.crop import CROP_MASK_THRESHOLD, crop_to_subject, has_subject, subject_bbox
 from core.errors import SegmentationError
 
 
@@ -54,3 +54,17 @@ def test_crop_rejects_mask_with_wrong_size() -> None:
             Image.new("RGB", (8, 6)),
             np.zeros((6, 7), dtype=np.float32),
         )
+
+
+def test_has_subject_follows_the_crop_threshold() -> None:
+    mask = np.zeros((4, 4), dtype=np.float32)
+    mask[1, 1] = CROP_MASK_THRESHOLD / 2
+
+    assert not has_subject(mask)
+    assert has_subject(mask, threshold=CROP_MASK_THRESHOLD / 4)
+    assert not has_subject(np.zeros((4, 4), dtype=np.float32))
+
+
+def test_has_subject_rejects_non_2d_mask() -> None:
+    with pytest.raises(SegmentationError):
+        has_subject(np.zeros((4, 4, 3), dtype=np.float32))

@@ -84,3 +84,11 @@ def test_enhance_contrast_combines_clahe_and_linear_factor() -> None:
 def test_equalize_contrast_rejects_invalid_clip(clip_limit: float) -> None:
     with pytest.raises(InvalidOptionError):
         equalize_contrast(np.zeros((4, 4), dtype=np.float32), clip_limit=clip_limit)
+
+
+def test_equalize_contrast_is_identity_for_single_pixel_crop() -> None:
+    # CLAHE would stretch one sample to pure white and invert the tone.
+    single = np.array([[17.0]], dtype=np.float32)
+
+    assert np.allclose(equalize_contrast(single), single)
+    assert np.allclose(enhance_contrast(single, factor=1.0), single)
