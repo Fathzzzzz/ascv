@@ -13,7 +13,6 @@ u2net) and can take a while; later runs reuse the cached session/model.
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from pathlib import Path
 
@@ -63,8 +62,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--model",
-        default=os.environ.get("REMBG_MODEL", DEFAULT_REMBG_MODEL),
-        help="Nama model rembg (default dari env REMBG_MODEL atau u2net).",
+        default=DEFAULT_REMBG_MODEL,
+        help="Nama model rembg (default u2net; lihat core.constants).",
     )
     return parser
 

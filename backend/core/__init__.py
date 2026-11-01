@@ -25,7 +25,9 @@ from .segmentation import (
     FullMaskSegmenter,
     RembgSegmenter,
     Segmenter,
+    is_model_loaded,
     normalize_mask,
+    preload_model,
 )
 from .quality import MIN_LUMA_STD, is_featureless
 from .pipeline import (
@@ -79,8 +81,10 @@ __all__ = [
     "grid_dimensions",
     "is_featureless",
     "has_subject",
+    "is_model_loaded",
     "map_grid",
     "normalize_mask",
+    "preload_model",
     "resize_to_grid",
     "subject_bbox",
     "resolve_width",

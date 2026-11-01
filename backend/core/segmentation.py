@@ -41,6 +41,16 @@ def _get_session(model_name: str) -> Any:
         return _sessions[model_name]
 
 
+def preload_model(model_name: str = DEFAULT_REMBG_MODEL) -> None:
+    """Warm the model cache at server start so requests skip the load cost."""
+    _get_session(model_name)
+
+
+def is_model_loaded(model_name: str = DEFAULT_REMBG_MODEL) -> bool:
+    """True when the session for `model_name` is already cached in this process."""
+    return model_name in _sessions
+
+
 def remove_mask(image: Image.Image, session: Any) -> Image.Image:
     """Run rembg and return only the alpha mask. Kept separate for testing."""
     from rembg import remove
