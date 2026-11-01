@@ -8,7 +8,7 @@ Setiap item dicetak PASS atau FAIL beserta saran perbaikan. Exit code 1 bila ada
 yang gagal. Skrip ini tidak mengubah apa pun: hanya membaca, memanggil HTTP, dan
 menjalankan test suite.
 
-Prasyarat: backend di port 8000 dan frontend di port 5173 sudah berjalan.
+Prasyarat: backend di port 8000 dan frontend di port 6744 sudah berjalan.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ VENV_PYTHON = BACKEND / ".venv" / "bin" / "python"
 
 # Port tetap sesuai keputusan proyek (backend/app/constants.py, vite.config.js).
 BACKEND_URL = "http://localhost:8000"
-FRONTEND_URL = "http://localhost:5173"
+FRONTEND_URL = "http://localhost:6744"
 
 MIN_PYTHON = (3, 10)
 MAX_PYTHON = (3, 13)  # rembg/onnxruntime belum punya wheel untuk 3.14
@@ -241,7 +241,7 @@ def check_frontend_running() -> Check:
         "e. Frontend dev server",
         ok,
         f"status {status}" if status else "tidak ada respons",
-        "Jalankan: `cd frontend && npm run dev` (port 5173).",
+        "Jalankan: `cd frontend && npm run dev` (port 6744).",
     )
 
 
@@ -362,7 +362,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--frontend-url",
         default=FRONTEND_URL,
-        help="Alamat frontend (default http://localhost:5173; hanya untuk diagnostik).",
+        help="Alamat frontend (default http://localhost:6744; hanya untuk diagnostik).",
     )
     args = parser.parse_args(argv)
     FRONTEND_URL = args.frontend_url.rstrip("/")

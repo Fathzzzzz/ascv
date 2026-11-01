@@ -42,7 +42,7 @@ Model segmentasi dimuat sekali saat start, jadi request pertama tidak perlu
 memuat ulang. Jika model belum ada, ia diunduh saat start (butuh internet).
 Log akan menunjukkan `Model segmentasi u2net dimuat.`
 
-**3. Install dependency frontend, lalu jalankan (port 5173)**
+**3. Install dependency frontend, lalu jalankan (port 6744)**
 
 ```bash
 cd frontend
@@ -50,7 +50,7 @@ npm install
 npm run dev
 ```
 
-**4. Buka <http://localhost:5173>**
+**4. Buka <http://localhost:6744>**
 
 **5. Verifikasi otomatis**
 
@@ -72,7 +72,7 @@ Tidak ada environment variable, `.env`, atau CORS. Semua nilai ada di satu file:
 | Batas lebar per mode, default lebar | `backend/core/pipeline.py` (`WIDTH_LIMITS`, `DEFAULT_WIDTH`) |
 | Preset charset ASCII dan emoji | `backend/core/mapping.py` |
 | Petunjuk UI (label, batas lebar) | `frontend/src/constants.js` |
-| Port | backend 8000, frontend 5173 (`frontend/vite.config.js`) |
+| Port | backend 8000, frontend 6744 (`frontend/vite.config.js`) |
 
 Frontend memanggil path relatif `/api/...`; Vite dev proxy meneruskannya ke
 `http://localhost:8000`, jadi tidak ada URL backend di komponen dan tidak perlu
