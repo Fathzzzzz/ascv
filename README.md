@@ -5,8 +5,8 @@ sehingga subjek tetap terbaca. Pipeline pengolahan gambar berada di `backend/cor
 dan tidak bergantung pada FastAPI, jadi bisa dijalankan lewat terminal maupun dites
 sendiri.
 
-Status: **M1 selesai** — modul `core/` dan skrip terminal. API (M3) dan frontend (M4)
-belum dibuat.
+Status: **M2 selesai** — modul `core/`, skrip terminal, dan unit test pipeline +
+preset charset. API (M3) dan frontend (M4) belum dibuat.
 
 ## Struktur
 
@@ -14,7 +14,7 @@ belum dibuat.
 backend/
   core/            # pipeline: segmentation > crop > grayscale > grid > mapping
   scripts/convert.py  # runner terminal untuk core
-  tests/           # unit test per tahap pipeline
+  tests/           # unit test per tahap pipeline + kontrak charset
 frontend/          # menyusul di M4
 ```
 
@@ -73,22 +73,51 @@ pytest
 
 ## Pipeline
 
-1. **Segmentation** — `rembg` menghasilkan mask subjek; model dimuat sekali lalu dipakai ulang.
-2. **Crop** — gambar dan mask dipotong ke bounding box subjek (mask kosong = tanpa crop).
-3. **Grayscale** — luminance BT.601 `0.299R + 0.587G + 0.114B`, lalu CLAHE dan faktor kontras linear.
-4. **Grid** — resize ke jumlah kolom yang diminta; tinggi dikoreksi rasio karakter
+1. **Validasi kosong** — frame tanpa variasi tone (gambar polos/rusak/tidak terbaca)
+   langsung ditolak sebagai `Error, blank image`, sebelum model dimuat.
+2. **Segmentation** — `rembg` menghasilkan mask subjek; model dimuat sekali lalu dipakai ulang.
+3. **Crop** — gambar dan mask dipotong ke bounding box subjek.
+4. **Grayscale** — luminance BT.601 `0.299R + 0.587G + 0.114B`, lalu CLAHE dan faktor kontras linear.
+5. **Grid** — resize ke jumlah kolom yang diminta; tinggi dikoreksi rasio karakter
    (ASCII 0.5, emoji 1.0).
-5. **Mapping** — brightness tiap sel dipetakan ke ramp gelap→terang (`--invert` membalik urutannya);
+6. **Mapping** — brightness tiap sel dipetakan ke ramp gelap→terang (`--invert` membalik urutannya);
    sel di luar mask menjadi spasi.
 
 Lebar yang diterima: ASCII 40–200 (default 100), emoji 20–80 (default 40).
+
+## Pesan `Error, blank image`
+
+Dipakai untuk semua gambar yang tidak bisa dihasilkan hasilnya:
+
+| Kondisi | Penyebab |
+| --- | --- |
+| File bukan gambar / rusak / tidak ada | decode gagal |
+| Gambar polos (nyaris tanpa variasi tone) | tidak ada subjek untuk dikenali |
+| Mask subjek kosong setelah segmentasi | model tidak menemukan orang |
+| Area subjek (setelah crop) polos | mask menutupi bidang rata seperti dinding |
+
+Kesalahan **opsi** (lebar, mode, charset) tetap menampilkan pesan spesifik,
+misalnya `Error: Lebar mode ascii harus antara 40 dan 200 kolom.`
+
+## Preset charset
+
+| Mode | Preset | Isi |
+| --- | --- | --- |
+| ascii | `standard` (default) | `@%#*+=-:. ` |
+| ascii | `dense` | 70 level, ramp klasik |
+| ascii | `blocks` | `█▓▒░ ` |
+| emoji | `moon` (default) | 🌑🌒🌓🌔🌕 |
+| emoji | `squares` | ⬛🟫🟪🟦🟩🟨🟧⬜ |
+
+Semua preset berurutan gelap→terang dan token emoji selalu satu code point,
+sehingga grid tetap rapi. Konvensi ini dijaga oleh `tests/test_charsets.py`.
 
 ## Milestone
 
 | Tahap | Isi | Status |
 | --- | --- | --- |
 | M1 | Modul `core/` + skrip terminal | selesai |
-| M2 | Unit test pipeline & preset charset | menyusul |
+| M2 | Unit test pipeline & preset charset | selesai |
 | M3 | API FastAPI `/api/convert` | menyusul |
 | M4 | Frontend React | menyusul |
 | M5 | Integrasi & uji set foto | menyusul |
